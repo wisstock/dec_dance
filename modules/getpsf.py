@@ -17,12 +17,12 @@ import psf
 import gila
 
 def psfRiWo(setting, ems=False):
-	""" Calculate Richards-Wolf PSF model
+    """ Calculate Richards-Wolf PSF model
 
     return PSF as numpy array, values was normalised from 0 to 1
 
-	"""
-	args = {'shape': (256, 256),  # number of samples in z and r direction
+    """
+    args = {'shape': (256, 256),  # number of samples in z and r direction
 	        'dims': (5.0, 5.0),  # size in z and r direction in micrometers
 	        'ex_wavelen': 488.0,
 	        'em_wavelen': 520.0,
@@ -32,14 +32,16 @@ def psfRiWo(setting, ems=False):
 	        'pinhole_radius': 0.05,
 	        'pinhole_shape': 'square'}
 
-	args.update(setting)
+    args.update(setting)
 
-	if ems:
-		em_psf = psf.PSF(psf.ISOTROPIC| psf.EMISSION, **args)
-		args.update({'empsf': em_psf})
+    if ems:
+        em_psf = psf.PSF(psf.ISOTROPIC| psf.EMISSION, **args)
+        args.update({'empsf': em_psf})
 
-	confocal_psf = psf.PSF(psf.ISOTROPIC | psf.CONFOCAL, **args)
-	return confocal_psf.volume()
+    confocal_psf = psf.PSF(psf.ISOTROPIC | psf.CONFOCAL, **args)
+
+    logging.info('Richards-Wolf PSF created!')
+    return confocal_psf.volume()
 
 def psfGiLa(setting):
     """ Calculate Gibson-Lanni PSF model
