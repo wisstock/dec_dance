@@ -1,0 +1,13 @@
+.ipynb_checkpoints/
+.temp/
+logs/
+confocal_data/
+motoneuron/
+__pycache__
+
+*.log
+*.sublime-project
+*.sublime-workspace
+*.zip
+*.csv
+
