@@ -37,8 +37,8 @@ def createSphere(arr_size=[30, 30, 30],
         logging.info('Filled sphere with r={}px created'.format(r))
         return 1*(distance <= r)
 
-def getPSNR(arr, lim=10, dim=3):
-    """ Calculating peak signal-to-noise ratio (in dB) of 2D or 3D image ('dim').
+def relSNR(arr, lim=10, dim=3):
+    """ Calculating relative signal-to-noise ratio (in dB) of 2D or 3D image ('dim').
     Requires size (in px, 'lim') of square region for noise SD calculation.
 
     PSNR = 10lg(max/SD)
@@ -54,11 +54,31 @@ def getPSNR(arr, lim=10, dim=3):
     logging.info('Noise SD={:.3f} in region {}x{}px'.format(noise_sd, lim, lim))
     logging.info('Noise mean={:.3f} in region {}x{}px'.format(noise_mean, lim, lim))
 
-    psnr = 10 * math.log10(np.max(arr)/noise_sd)
+    snr = 10 * math.log10(np.max(arr)/noise_sd)
 
+    logging.info('Image relative SNR = {:.1f}dB'.format(snr))
+
+    return snr, noise_mean, noise_sd
+
+def PSNR(img_1, img_2, img_max=False):
+    """ Calculating PSNR.
+    img_1 - native image
+    img_2 - noisy image
+
+    """
+
+    mse = np.mean((img_1 - img_2)**2)
+
+    if mse == 0:
+        return 100
+
+    if not img_max:
+        img_max = np.max(img_1)
+
+    psnr = 20 * math.log10(img_max/math.sqrt(mse))
     logging.info('Image PSNR = {:.1f}dB'.format(psnr))
 
-    return psnr, noise_mean, noise_sd
+    return psnr
 
 
 if __name__=="__main__":

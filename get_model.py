@@ -56,7 +56,7 @@ sphere = dev.createSphere(arr_size,
                           sphere_center,
                           r,
                           wall=False)  # arr_size,sphere_center, r)
-sphere[sphere == 1] = 4000
+sphere[sphere == 1] = 600  # yfp=4000, hpca=600
 sphere = sphere.astype(np.float32)
 
 psf_rw = psf.psfRiWo(rw_args)  # generate PSF
@@ -71,8 +71,8 @@ end_time = timer()
 logging.info('Convolution complete in {:.3f} seconds'.format(end_time - start_time))
 
 noise_sphere = util.random_noise(conv_sphere, mode='gaussian',
-                                              mean=175,
-                                              var=13,
+                                              mean=190,  # yfp=175, hpca=190
+                                              var=14,    # yfp=13, hpca=14
                                               clip=False)
 
 logging.info('Raw image sum intensity {}'.format(np.sum(sphere)))
