@@ -48,6 +48,8 @@ def getPSNR(arr, edge_lim=15, dim=3):
     noise_mean = np.mean(edge_stack)
     noise_sd = np.std(edge_stack)
 
+
+    logging.info('Image peak val={:.3f}'.format(np.max(arr)))
     logging.info('Noise SD={:.3f} in region {}x{}px'.format(noise_sd, edge_lim, edge_lim))
     logging.info('Noise mean={:.3f} in region {}x{}px'.format(noise_mean, edge_lim, edge_lim))
 

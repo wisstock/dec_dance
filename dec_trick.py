@@ -15,8 +15,6 @@ import logging
 from timeit import default_timer as timer
 
 import numpy as np
-from scipy.ndimage import convolve
-from skimage import util
 from skimage.external import tifffile
 
 import matplotlib
@@ -38,53 +36,17 @@ plt.style.use('dark_background')
 plt.rcParams['figure.facecolor'] = '#272b30'
 plt.rcParams['image.cmap'] = 'inferno'
 
-wd_path = os.path.join(sys.path[0],'/models/')
-psf_name = 'model_psf.tif'
-sphere_name = 'model_cell.tif'
+wd_path = os.path.join(sys.path[0],'model/')
+psf_name = 'psf.tif'
+sphere_name = 'raw.tif'
+conv_name = 'conv.tif'
+noise_name = 'noise.tif'
 
 
-# model sphere parameters
-arr_size = (100,100,100)
-sphere_center = (50,50,50)
-r=35
-
-# model PSF parameters
-rw_args = {'shape': (50, 50),  # number of samples in z and r direction
-           'dims': (5, 5),   # size in z (1.2um*9slices) and r(0.1um*160px) direction in micrometers
-           'ex_wavelen': 462.0,  # excitation wavelength in nanometers
-            'em_wavelen': 492.0,  # emission wavelength in nanometers
-            'num_aperture': 1.0,
-            'refr_index': 1.333,
-            'magnification': 60.0,
-            'pinhole_radius': 0.250,  # in mm
-            'pinhole_shape': 'round'}
-
-
-
-sphere = dev.createSphere(arr_size,
-                          sphere_center,
-                          r,
-                          wall=1)  # arr_size,sphere_center, r)
-sphere[sphere == 1] = 1000
-sphere = sphere.astype(np.float32)
-
-print(np.max(sphere))
-
-# start_time = timer()
-# psf_rw = psf.psfRiWo(rw_args)  # generate PSF
-# psf = util.img_as_int(psf_rw)
-# conv_sphere = convolve(sphere, psf)
-# end_time = timer()
-# logger.info('Convolution complete in {:.3f} seconds'.format(end_time - start_time))
-
-noise_sphere = util.random_noise(sphere, mode='gaussian',
-                                         mean=1,
-                                         var=0.5,
-                                         clip=False)
-
-
-# tifffile.imsave(os.path.join(wd_path, psf_name), psf_rw)
-# tifffile.imsave(os.path.join(wd_path, sphere_name), noise_sphere)
+psf = tifffile.imread(os.path.join(wd_path, psf_name))
+raw_sphere = tifffile.imread(os.path.join(wd_path, sphere_name))
+conv_sphere = tifffile.imread(os.path.join(wd_path, conv_name))
+noise_sphere = tifffile.imread(os.path.join(wd_path, noise_name))
 
 # 3D vis
 # fig =plt.figure(figsize=(6,6))
@@ -93,25 +55,33 @@ noise_sphere = util.random_noise(sphere, mode='gaussian',
 # plt.show()
 
 # middle slices
-ax0 = plt.subplot(121)
-slice_0 = ax0.imshow(sphere[50,:,:]) 
+ax0 = plt.subplot(231)
+slice_0 = ax0.imshow(raw_sphere[15,:,:]) 
 divider_0 = make_axes_locatable(ax0)
 cax = divider_0.append_axes("right", size="3%", pad=0.1)
 plt.colorbar(slice_0, cax=cax)
 ax0.set_title('Raw')
 
-# ax1 = plt.subplot(231)
-# slice_1 = ax1.imshow(conv_sphere[50,:,:]) 
-# divider_1 = make_axes_locatable(ax1)
-# cax = divider_1.append_axes("right", size="3%", pad=0.1)
-# plt.colorbar(slice_1, cax=cax)
-# ax1.set_title('Convolve')
+ax1 = plt.subplot(232)
+slice_1 = ax1.imshow(conv_sphere[15,:,:]) 
+divider_1 = make_axes_locatable(ax1)
+cax = divider_1.append_axes("right", size="3%", pad=0.1)
+plt.colorbar(slice_1, cax=cax)
+ax1.set_title('Convolve')
 
-ax2 = plt.subplot(122)
-slice_2 = ax2.imshow(noise_sphere[50,:,:]) 
+ax2 = plt.subplot(233)
+slice_2 = ax2.imshow(noise_sphere[15,:,:]) 
 divider_2 = make_axes_locatable(ax2)
 cax = divider_2.append_axes("right", size="3%", pad=0.1)
 plt.colorbar(slice_2, cax=cax)
 ax2.set_title('Noise')
 
+ax3 = plt.subplot(235)
+slice_3 = ax3.imshow(psf[:,15,:]) 
+divider_3 = make_axes_locatable(ax3)
+cax = divider_3.append_axes("right", size="3%", pad=0.1)
+plt.colorbar(slice_3, cax=cax)
+ax3.set_title('PSF')
+
+plt.tight_layout()
 plt.show()

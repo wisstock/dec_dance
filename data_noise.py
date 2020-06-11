@@ -36,13 +36,11 @@ plt.rcParams['image.cmap'] = 'inferno'
 
 hpca_path = os.path.join(sys.path[0], 'data/hpca_dec_4.tif')
 # data_path = os.path.join(sys.path[0], 'data/hpca/hpca.tif')
-yfp_path = os.path.join(sys.path[0], 'data/yfp_dec_4.tif')
+yfp_path = os.path.join(sys.path[0], 'data/yfp/yfp.tif')
 
 frame = 10
 roi_start = [140, 200]  # [85, 150]
 roi_lim = 50
-
-# mean, sd = dev.getPSNR(hpca_stack)
 
 
 hpca_stack = tifffile.imread(hpca_path)
@@ -52,12 +50,15 @@ yfp_stack = tifffile.imread(yfp_path)
 yfp_img = yfp_stack[frame,:,:]
 yfp_roi = yfp_img[roi_start[1]:roi_start[1]+roi_lim,roi_start[0]:roi_start[0]+roi_lim]
 
+
+mean, sd = dev.getPSNR(yfp_stack)
+
 # merge_roi = np.dstack((hpca_img, yfp_img,  np.zeros(shape=(320,320))))
 
-ax0 = plt.subplot()
-ax0.imshow(yfp_roi, cmap='Blues', alpha=0.5)
-ax0.imshow(hpca_roi, cmap='Reds', alpha=0.5)
-ax0.set_title('Full image')
+# ax0 = plt.subplot()
+# ax0.imshow(hpca_roi, cmap='Reds', alpha=1)
+# ax0.imshow(yfp_roi, cmap='Blues', alpha=0.7)
+# ax0.set_title('Full image')
 
-plt.tight_layout()
-plt.show()
+# plt.tight_layout()
+# plt.show()
