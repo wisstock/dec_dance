@@ -40,19 +40,17 @@ iter_list = [4, 8, 16, 32, 64, 128]
 scaling_factor = 5  # subtraction region part for background calculation
 
 
-input_path = os.path.join(sys.path[0], 'model/noise.tif')
-output_path = os.path.join(sys.path[0], 'model/dec/')
+input_path = os.path.join(sys.path[0], 'model_fill/noise.tif')
+output_path = os.path.join(sys.path[0], 'model_fill/dec/')
 
-psf_path = os.path.join(sys.path[0], 'model/psf.tif')
+psf_path = os.path.join(sys.path[0], 'model_fill/psf.tif')
+
+img = io.imread(input_path)
+logger.info('File "{}" uploaded'.format(input_path.split('/')[-1]))
 
 for n_iter in iter_list:
     logging.info('Deconvolution with {} iteration starting'.format(n_iter))
     start_time = timer()
-
-
-    logger.info('File "{}" uploaded'.format(input_path.split('/')[-1]))
-
-    img = io.imread(input_path)
 
     processed_img = ts.backCon(img, np.shape(img)[1] // scaling_factor)  # background extraction
 

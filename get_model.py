@@ -27,7 +27,7 @@ FORMAT = '%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message
 logging.basicConfig(format=FORMAT,
                     level=logging.getLevelName('INFO'))
 
-wd_path = os.path.join(sys.path[0],'model/')
+wd_path = os.path.join(sys.path[0],'model_fill/')
 psf_name = 'psf.tif'
 sphere_name = 'raw.tif'
 conv_name = 'conv.tif'
@@ -55,7 +55,7 @@ rw_args = {'shape': (15, 15),  # number of samples in z and r direction
 sphere = dev.createSphere(arr_size,
                           sphere_center,
                           r,
-                          wall=1)  # arr_size,sphere_center, r)
+                          wall=False)  # arr_size,sphere_center, r)
 sphere[sphere == 1] = 4000
 sphere = sphere.astype(np.float32)
 
@@ -79,6 +79,6 @@ logging.info('Raw image sum intensity {}'.format(np.sum(sphere)))
 logging.info('Convolve image sum intensity {}'.format(np.sum(conv_sphere)))
 
 tifffile.imsave(os.path.join(wd_path, psf_name), psf_norm)
-tifffile.imsave(os.path.join(wd_path, sphere_name), noise_sphere)
+tifffile.imsave(os.path.join(wd_path, sphere_name), sphere)
 tifffile.imsave(os.path.join(wd_path, conv_name), conv_sphere)
 tifffile.imsave(os.path.join(wd_path, noise_name), noise_sphere)

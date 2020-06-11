@@ -36,7 +36,7 @@ plt.style.use('dark_background')
 plt.rcParams['figure.facecolor'] = '#272b30'
 plt.rcParams['image.cmap'] = 'inferno'
 
-wd_path = os.path.join(sys.path[0],'model/')
+wd_path = os.path.join(sys.path[0],'model_fill/')
 psf_name = 'psf.tif'
 sphere_name = 'raw.tif'
 conv_name = 'conv.tif'
@@ -48,40 +48,44 @@ raw_sphere = tifffile.imread(os.path.join(wd_path, sphere_name))
 conv_sphere = tifffile.imread(os.path.join(wd_path, conv_name))
 noise_sphere = tifffile.imread(os.path.join(wd_path, noise_name))
 
-# 3D vis
+
+psnr, mean, sd = dev.getPSNR(noise_sphere, lim=5)
+
+
+# # 3D vis of binary data
 # fig =plt.figure(figsize=(6,6))
 # ax = fig.gca(projection='3d')
-# ax.voxels(sphere, facecolors='b', edgecolor='k')
+# ax.voxels(noise_sphere, facecolors='b', edgecolor='k')
 # plt.show()
 
-# middle slices
-ax0 = plt.subplot(231)
-slice_0 = ax0.imshow(raw_sphere[15,:,:]) 
-divider_0 = make_axes_locatable(ax0)
-cax = divider_0.append_axes("right", size="3%", pad=0.1)
-plt.colorbar(slice_0, cax=cax)
-ax0.set_title('Raw')
+# # middle slices
+# ax0 = plt.subplot(231)
+# slice_0 = ax0.imshow(raw_sphere[15,:,:]) 
+# divider_0 = make_axes_locatable(ax0)
+# cax = divider_0.append_axes("right", size="3%", pad=0.1)
+# plt.colorbar(slice_0, cax=cax)
+# ax0.set_title('Raw')
 
-ax1 = plt.subplot(232)
-slice_1 = ax1.imshow(conv_sphere[15,:,:]) 
-divider_1 = make_axes_locatable(ax1)
-cax = divider_1.append_axes("right", size="3%", pad=0.1)
-plt.colorbar(slice_1, cax=cax)
-ax1.set_title('Convolve')
+# ax1 = plt.subplot(232)
+# slice_1 = ax1.imshow(conv_sphere[15,:,:]) 
+# divider_1 = make_axes_locatable(ax1)
+# cax = divider_1.append_axes("right", size="3%", pad=0.1)
+# plt.colorbar(slice_1, cax=cax)
+# ax1.set_title('Convolve')
 
-ax2 = plt.subplot(233)
-slice_2 = ax2.imshow(noise_sphere[15,:,:]) 
-divider_2 = make_axes_locatable(ax2)
-cax = divider_2.append_axes("right", size="3%", pad=0.1)
-plt.colorbar(slice_2, cax=cax)
-ax2.set_title('Noise')
+# ax2 = plt.subplot(233)
+# slice_2 = ax2.imshow(noise_sphere[15,:,:]) 
+# divider_2 = make_axes_locatable(ax2)
+# cax = divider_2.append_axes("right", size="3%", pad=0.1)
+# plt.colorbar(slice_2, cax=cax)
+# ax2.set_title('Noise')
 
-ax3 = plt.subplot(235)
-slice_3 = ax3.imshow(psf[:,15,:]) 
-divider_3 = make_axes_locatable(ax3)
-cax = divider_3.append_axes("right", size="3%", pad=0.1)
-plt.colorbar(slice_3, cax=cax)
-ax3.set_title('PSF')
+# ax3 = plt.subplot(235)
+# slice_3 = ax3.imshow(psf[:,15,:]) 
+# divider_3 = make_axes_locatable(ax3)
+# cax = divider_3.append_axes("right", size="3%", pad=0.1)
+# plt.colorbar(slice_3, cax=cax)
+# ax3.set_title('PSF')
 
-plt.tight_layout()
-plt.show()
+# plt.tight_layout()
+# plt.show()

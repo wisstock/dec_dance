@@ -12,6 +12,7 @@ import os
 import logging
 
 import numpy as np
+import math
 
 
 def createSphere(arr_size=[30, 30, 30],
@@ -36,24 +37,28 @@ def createSphere(arr_size=[30, 30, 30],
         logging.info('Filled sphere with r={}px created'.format(r))
         return 1*(distance <= r)
 
-def getPSNR(arr, edge_lim=15, dim=3):
-    """ Calculating peak signal-to-noise ratio of 2D or 3D image ('dim').
-    Requires size (in px, 'edge_lim') of square region for noise SD calculation.
+def getPSNR(arr, lim=10, dim=3):
+    """ Calculating peak signal-to-noise ratio (in dB) of 2D or 3D image ('dim').
+    Requires size (in px, 'lim') of square region for noise SD calculation.
 
     PSNR = 10lg(max/SD)
 
     """
 
-    edge_stack = arr[:,:edge_lim,:edge_lim]
-    noise_mean = np.mean(edge_stack)
-    noise_sd = np.std(edge_stack)
+    stack = arr[:,:lim,:lim]
+    noise_mean = np.mean(stack)
+    noise_sd = np.std(stack)
 
 
     logging.info('Image peak val={:.3f}'.format(np.max(arr)))
-    logging.info('Noise SD={:.3f} in region {}x{}px'.format(noise_sd, edge_lim, edge_lim))
-    logging.info('Noise mean={:.3f} in region {}x{}px'.format(noise_mean, edge_lim, edge_lim))
+    logging.info('Noise SD={:.3f} in region {}x{}px'.format(noise_sd, lim, lim))
+    logging.info('Noise mean={:.3f} in region {}x{}px'.format(noise_mean, lim, lim))
 
-    return noise_mean, noise_sd
+    psnr = 10 * math.log10(np.max(arr)/noise_sd)
+
+    logging.info('Image PSNR = {:.1f}dB'.format(psnr))
+
+    return psnr, noise_mean, noise_sd
 
 
 if __name__=="__main__":

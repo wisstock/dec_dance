@@ -36,7 +36,8 @@ plt.rcParams['image.cmap'] = 'inferno'
 
 hpca_path = os.path.join(sys.path[0], 'data/hpca_dec_4.tif')
 # data_path = os.path.join(sys.path[0], 'data/hpca/hpca.tif')
-yfp_path = os.path.join(sys.path[0], 'data/yfp/yfp.tif')
+yfp_path = os.path.join(sys.path[0], 'data/yfp_dec_128.tif')
+# yfp_path = os.path.join(sys.path[0], 'data/yfp/yfp.tif')
 
 frame = 10
 roi_start = [140, 200]  # [85, 150]
@@ -51,7 +52,7 @@ yfp_img = yfp_stack[frame,:,:]
 yfp_roi = yfp_img[roi_start[1]:roi_start[1]+roi_lim,roi_start[0]:roi_start[0]+roi_lim]
 
 
-mean, sd = dev.getPSNR(yfp_stack)
+psnr, mean, sd = dev.getPSNR(yfp_stack)
 
 # merge_roi = np.dstack((hpca_img, yfp_img,  np.zeros(shape=(320,320))))
 
