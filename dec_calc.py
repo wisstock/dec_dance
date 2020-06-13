@@ -2,9 +2,7 @@
 
 """ Copyright © 2020 Borys Olifirov
 
-2-nd script
-
-Deconvolution seq for HEK263 data
+Deconvolution of model data
 
 """
 
@@ -13,7 +11,6 @@ import os
 import logging
 
 import numpy as np
-import matplotlib.pyplot as plt
 from timeit import default_timer as timer
 from skimage import io
 # from skimage.external import tifffile
@@ -32,18 +29,14 @@ logging.basicConfig(format=FORMAT,
                     level=logging.getLevelName('DEBUG'))
 logger = logging.getLogger('DeconvolutionCLI')
 
-
-# n_iter = 16
-
-iter_list = [4, 8, 16, 32, 64, 128]
-
-scaling_factor = 5  # subtraction region part for background calculation
-
-
 input_path = os.path.join(sys.path[0], 'model_fill/noise.tif')
 output_path = os.path.join(sys.path[0], 'model_fill/dec/')
 
 psf_path = os.path.join(sys.path[0], 'model_fill/psf.tif')
+
+iter_list = [4, 8, 16, 32, 64, 128]
+
+scaling_factor = 5  # subtraction region part for background calculation
 
 img = io.imread(input_path)
 logger.info('File "{}" uploaded'.format(input_path.split('/')[-1]))
@@ -67,7 +60,7 @@ for n_iter in iter_list:
     output_name = 'dec_%s.tif' % (n_iter)
     io.imsave(os.path.join(output_path, output_name), res.data)
 
-    logging.info('Deconvolution with {} iteration complete'.format(n_iter))
+    logger.info('Deconvolution with {} iteration complete'.format(n_iter))
 
 
 end_time = timer()

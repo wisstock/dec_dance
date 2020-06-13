@@ -54,7 +54,7 @@ def relSNR(arr, lim=10, dim=3):
     logging.info('Noise SD={:.3f} in region {}x{}px'.format(noise_sd, lim, lim))
     logging.info('Noise mean={:.3f} in region {}x{}px'.format(noise_mean, lim, lim))
 
-    snr = 10 * math.log10(np.max(arr)/noise_sd)
+    snr = 10 * math.log10(np.max(arr)/noise_mean)
 
     logging.info('Image relative SNR = {:.1f}dB'.format(snr))
 

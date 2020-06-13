@@ -22,6 +22,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 sys.path.append('modules')
 import getpsf as psf
+import devolution as dev
 
 
 FORMAT = '%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message)s'
@@ -45,19 +46,23 @@ rw_args = {'shape': (50, 50),  # number of samples in z and r direction
 # psf_rw = psf.psfRiWo(rw_args)
 
 
-data_path = os.path.join(sys.path[0],'model_fill/noise.tif')
-# data_path = os.path.join(sys.path[0],'model_fill/dec/dec_128.tif')
+path_0 = os.path.join(sys.path[0],'model_circ/raw.tif')
+path_1 = os.path.join(sys.path[0],'model_circ/dec/dec_4.tif')
 
-img = tifffile.imread(data_path)
+img = tifffile.imread(path_0)
+exp = tifffile.imread(path_1)
+
+dev.PSNR(img, exp)
+# dev.relSNR(img,5)
+dev.relSNR(exp,5)
 
 
-
-ax0 = plt.subplot()
-slice0 = ax0.imshow(img[15,:,:])
-slice0.set_clim(vmin=0, vmax=650)  # 4200 for circ, 650 for fill
-divider0 = make_axes_locatable(ax0)
-cax = divider0.append_axes("right", size="3%", pad=0.1)
-plt.colorbar(slice0, cax=cax)
+# ax0 = plt.subplot()
+# slice0 = ax0.imshow(img[15,:,:])
+# slice0.set_clim(vmin=0, vmax=650)  # 4200 for circ, 650 for fill
+# divider0 = make_axes_locatable(ax0)
+# cax = divider0.append_axes("right", size="3%", pad=0.1)
+# plt.colorbar(slice0, cax=cax)
 
 
 
@@ -90,5 +95,5 @@ plt.colorbar(slice0, cax=cax)
 # ax_xy.set_title('X-Y')
 
 
-plt.tight_layout()
-plt.show()
+# plt.tight_layout()
+# plt.show()
