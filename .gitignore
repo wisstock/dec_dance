@@ -5,6 +5,8 @@ confocal_data/
 motoneuron/
 __pycache__
 
+.Rhistory
+
 *.log
 *.sublime-project
 *.sublime-workspace
