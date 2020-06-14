@@ -56,7 +56,7 @@ sphere = dev.createSphere(arr_size,
                           sphere_center,
                           r,
                           wall=False)  # arr_size,sphere_center, r)
-sphere[sphere == 1] = 600  # yfp=4000, hpca=600
+sphere[sphere == 1] = 4000  # yfp=4000, hpca=600
 sphere = sphere.astype(np.float32)
 
 psf_rw = psf.psfRiWo(rw_args)  # generate PSF

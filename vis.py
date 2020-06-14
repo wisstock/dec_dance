@@ -23,6 +23,7 @@ from mpl_toolkits.mplot3d import Axes3D
 sys.path.append('modules')
 import getpsf as psf
 import devolution as dev
+import threshold as ts
 
 
 FORMAT = '%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message)s'
@@ -45,24 +46,42 @@ rw_args = {'shape': (50, 50),  # number of samples in z and r direction
 
 # psf_rw = psf.psfRiWo(rw_args)
 
+raw = tifffile.imread(os.path.join(sys.path[0],'model_circ/raw.tif'))
+img_1 = tifffile.imread(os.path.join(sys.path[0],'model_snr/dec_snr3_dec1024.tif'))
+img_2 = tifffile.imread(os.path.join(sys.path[0],'model_snr/dec_snr30_dec1024.tif'))
 
-path_0 = os.path.join(sys.path[0],'model_circ/raw.tif')
-path_1 = os.path.join(sys.path[0],'model_circ/dec/dec_4.tif')
+# dev.PSNR(img, exp)
+# # dev.relSNR(img,5)
+# dev.relSNR(exp,5)
 
-img = tifffile.imread(path_0)
-exp = tifffile.imread(path_1)
-
-dev.PSNR(img, exp)
-# dev.relSNR(img,5)
-dev.relSNR(exp,5)
+# processed_img = ts.backCon(img, 5)  # background extraction
 
 
-# ax0 = plt.subplot()
-# slice0 = ax0.imshow(img[15,:,:])
-# slice0.set_clim(vmin=0, vmax=650)  # 4200 for circ, 650 for fill
-# divider0 = make_axes_locatable(ax0)
-# cax = divider0.append_axes("right", size="3%", pad=0.1)
-# plt.colorbar(slice0, cax=cax)
+# middle slices
+ax0 = plt.subplot(131)
+slice_0 = ax0.imshow(raw[15,:,:])
+slice_0.set_clim(vmin=0, vmax=4200) 
+divider_0 = make_axes_locatable(ax0)
+cax = divider_0.append_axes("right", size="3%", pad=0.1)
+plt.colorbar(slice_0, cax=cax)
+ax0.set_title('Raw')
+
+ax1 = plt.subplot(132)
+slice_1 = ax1.imshow(img_1[15,:,:])
+slice_1.set_clim(vmin=0, vmax=4200)  
+divider_1 = make_axes_locatable(ax1)
+cax = divider_1.append_axes("right", size="3%", pad=0.1)
+plt.colorbar(slice_1, cax=cax)
+ax1.set_title('Initial SNR 3dB')
+
+ax2 = plt.subplot(133)
+slice_2 = ax2.imshow(img_2[15,:,:])
+slice_2.set_clim(vmin=0, vmax=4200)  
+divider_2 = make_axes_locatable(ax2)
+cax = divider_2.append_axes("right", size="3%", pad=0.1)
+plt.colorbar(slice_2, cax=cax)
+ax2.set_title('Initial SNR 10dB')
+
 
 
 
@@ -95,5 +114,5 @@ dev.relSNR(exp,5)
 # ax_xy.set_title('X-Y')
 
 
-# plt.tight_layout()
-# plt.show()
+plt.tight_layout()
+plt.show()
