@@ -2,7 +2,7 @@
 
 """ Copyright © 2020 Borys Olifirov
 
-SNR experiment
+Init SNR experiment
 
 """
 
@@ -22,14 +22,11 @@ from flowdec import psf as fd_psf
 
 sys.path.append('modules')
 import devolution as dev
-import threshold as ts
-
 
 def dec(img, psf, i):
     """ Iterative application of deconvolution.
 
     """
-    # processed_img = ts.backCon(img, 5)  # background extraction
     logger.info('      Deconvolution with {} iteration start'.format(i))
     acq = fd_data.Acquisition(data=img,
                               kernel=psf)
@@ -41,9 +38,7 @@ def dec(img, psf, i):
 
 def iter_save(img, noise_val, noise_sd, save_list, path):
     if i in save_list:
-        noise_name = str(noise_val)
-        noise_name = noise_name.replace('.', '')
-        file_name = 'snr{}_sd{:.1f}_dec{}.tif'.format(noise_name, noise_sd, i)
+        file_name = 'snr{}_sd{}_dec{}.tif'.format(noise_val, noise_sd, i)
         tifffile.imsave(os.path.join(path, file_name), img)
         logging.info('File {} saved'.format(file_name))
         return
@@ -56,24 +51,22 @@ logging.basicConfig(format=FORMAT,
 logger = logging.getLogger('DeconvolutionCLI')
 
 
-output_path = os.path.join(sys.path[0], 'model_snr/')
+output_path = os.path.join(sys.path[0], 'model_snr_fill/')
 
-raw_img = tifffile.imread(os.path.join(sys.path[0], 'model_circ/raw.tif'))
-conv_img = tifffile.imread(os.path.join(sys.path[0], 'model_circ/conv.tif'))
-psf = tifffile.imread(os.path.join(sys.path[0], 'model_circ/psf.tif'))
+raw_img = tifffile.imread(os.path.join(sys.path[0], 'model_fill/raw.tif'))
+conv_img = tifffile.imread(os.path.join(sys.path[0], 'model_fill/conv.tif'))
+psf = tifffile.imread(os.path.join(sys.path[0], 'model_fill/psf.tif'))
 
-noise_list = [0, 1, 5, 10, 20, 30, 40, 50]  # init SNR in dB
+noise_list = [-2, -1, 0, 1, 5, 10, 20, 30, 40, 50]  # for circ [0, 1, 5, 10, 20, 30, 40, 50]
 sd_list = [25, 20, 15, 10, 5, 2, 0]
 
-iter_list = [8, 16, 32, 64, 128, 256, 512, 1024]
+iter_list = [8, 16, 32, 64, 128, 256, 512, 1024] 
 iter_for_save = [8, 64, 128, 512]
 
-init_img_mean = 2000
-init_noise_sd = 15
+init_img_mean = 600  # for circ 4000
+psnr_frame = 15  # frame for PSNR calc
 
-psnr_frame = 15  # frame for PSNR calculation
-
-df = pd.DataFrame(columns=['PSNR', 'init_SNR', 'init_sd', 'iter'])
+df = pd.DataFrame(columns=['PSNR', 'init_snr', 'init_sd', 'iter', 'sum'])
 
 start_time = timer()
 for noise_lvl in noise_list:
@@ -93,7 +86,7 @@ for noise_lvl in noise_list:
 
         psnr_0 = dev.PSNR(raw_img, noise_img)
   
-        df = df.append(pd.Series([psnr_0, noise_lvl, round(sd_lvl, 2), 0], index=df.columns),
+        df = df.append(pd.Series([psnr_0, noise_lvl, sd_lvl, 0, np.sum(noise_img)], index=df.columns),
                        ignore_index=True)
 
         tifffile.imsave(os.path.join(output_path, 'conv_snr{}_sd{}.tif'.format(noise_lvl, sd_lvl)), noise_img)
@@ -103,10 +96,10 @@ for noise_lvl in noise_list:
 
             i_psnr = dev.PSNR(raw_img, dec_img)
 
-            df = df.append(pd.Series([i_psnr, noise_lvl, round(sd_lvl, 2), i], index=df.columns),
+            df = df.append(pd.Series([i_psnr, noise_lvl, round(sd_lvl, 2), i, np.sum(dec_img)], index=df.columns),
                            ignore_index=True)
 
-            iter_save(dec_img, noise_lvl, noise_sd, iter_for_save, output_path)
+            iter_save(dec_img, noise_lvl, sd_lvl, iter_for_save, output_path)
 
         logging.info('==> Iteration with {}dB noise SD complete\n'.format(sd_lvl))
     logging.info('====> Iteration with {}dB noise lvl complete\n \n'.format(noise_lvl))
