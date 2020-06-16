@@ -51,11 +51,11 @@ logging.basicConfig(format=FORMAT,
 logger = logging.getLogger('DeconvolutionCLI')
 
 
-output_path = os.path.join(sys.path[0], 'model_snr_fill/')
+output_path = os.path.join(sys.path[0], 'model_snr_circ/')
 
-raw_img = tifffile.imread(os.path.join(sys.path[0], 'model_fill/raw.tif'))
-conv_img = tifffile.imread(os.path.join(sys.path[0], 'model_fill/conv.tif'))
-psf = tifffile.imread(os.path.join(sys.path[0], 'model_fill/psf.tif'))
+raw_img = tifffile.imread(os.path.join(sys.path[0], 'model_circ/raw.tif'))
+conv_img = tifffile.imread(os.path.join(sys.path[0], 'model_circ/conv.tif'))
+psf = tifffile.imread(os.path.join(sys.path[0], 'model_circ/psf.tif'))
 
 noise_list = [-2, -1, 0, 1, 5, 10, 20, 30, 40, 50]  # for circ [0, 1, 5, 10, 20, 30, 40, 50]
 sd_list = [25, 20, 15, 10, 5, 2, 0]
@@ -63,8 +63,8 @@ sd_list = [25, 20, 15, 10, 5, 2, 0]
 iter_list = [8, 16, 32, 64, 128, 256, 512, 1024] 
 iter_for_save = [8, 64, 128, 512]
 
-init_img_mean = 600  # for circ 4000
-psnr_frame = 15  # frame for PSNR calc
+init_img_mean = 4000  # for circ 4000, for fill 600
+# psnr_frame = 15  # frame for PSNR calc
 
 df = pd.DataFrame(columns=['PSNR', 'init_snr', 'init_sd', 'iter', 'sum'])
 
@@ -89,7 +89,7 @@ for noise_lvl in noise_list:
         df = df.append(pd.Series([psnr_0, noise_lvl, sd_lvl, 0, np.sum(noise_img)], index=df.columns),
                        ignore_index=True)
 
-        tifffile.imsave(os.path.join(output_path, 'conv_snr{}_sd{}.tif'.format(noise_lvl, sd_lvl)), noise_img)
+        tifffile.imsave(os.path.join(output_path, 'snr{}_sd{}_conv.tif'.format(noise_lvl, sd_lvl)), noise_img)
 
         for i in iter_list:
             dec_img = dec(noise_img, psf, i)
