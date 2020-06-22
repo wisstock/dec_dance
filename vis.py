@@ -45,7 +45,7 @@ rw_args = {'shape': (50, 50),  # number of samples in z and r direction
             'pinhole_shape': 'round'}
 
 
-print(dev.createCell()[15,:,:])
+print(dev.createCell()[8,:,:])
 
 
 # psf_rw = psf.psfRiWo(rw_args)

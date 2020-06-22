@@ -49,18 +49,13 @@ def createCell(arr_size=[30, 30, 30],
                r=10,
                Im=10,
                Lm=1,
-               Ic=2,
-               bin=False):
+               Ic=2):
     """ Generate array with size 'arr_size' with sphere with radius 'r'.
     'center' - sphere center position;
     wall - sphere wall thickness in px,
     membrane intensity 'Im' and thickness 'Lm',
     and internal space intensity 'Ic'.
-
-    If 'bin' - True sun return binary sphere.
-
-    if this parameter is False sphere will be fill.
-
+    
     """
     coords = np.ogrid[:arr_size[0], :arr_size[1], :arr_size[2]]
     cell = np.sqrt((coords[0] - center[0])**2 + (coords[1]-center[1])**2 + (coords[2]-center[2])**2)
@@ -68,18 +63,9 @@ def createCell(arr_size=[30, 30, 30],
     logging.info('Void sphere with {}px wall and r={}px created '.format(Lm, r))
 
     mask_fill = 1*(cell <= r-Lm)
-    mask_memb = Im*(cell <= r) - Ic*(cell <= r-Lm)
+    cell = Im*(cell <= r) - (Im-Ic)*(cell <= r-Lm)
 
-    # out = distance <= r-2
-    # res = ma.masked_array(outer, mask=out, fill_value=0)
-
-    return mask_memb
-    
-    # if bin:
-    #     return outer - inner
-    # else:
-    #     logging.info('Filled sphere with r={}px created'.format(r))
-    #     return 1*(distance <= r)
+    return cell
 
 def relSNR(arr, lim=10, dim=3):
     """ Calculating relative signal-to-noise ratio (in dB) of 2D or 3D image ('dim').
