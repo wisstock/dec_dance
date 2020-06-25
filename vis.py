@@ -28,7 +28,7 @@ import threshold as ts
 
 FORMAT = '%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message)s'
 logging.basicConfig(format=FORMAT,
-                    level=logging.getLevelName('INFO'))
+                    level=logging.getLevelName('DEBUG'))
 
 plt.style.use('dark_background')
 plt.rcParams['figure.facecolor'] = '#272b30'
@@ -44,8 +44,11 @@ rw_args = {'shape': (50, 50),  # number of samples in z and r direction
             'pinhole_radius': 0.250,  # in mm
             'pinhole_shape': 'round'}
 
+test_img = dev.createCell(Im=4, Ic=2, Lm=2)
 
-print(dev.createCell()[8,:,:])
+dev.confCollapse(test_img)
+
+print(test_img[15,:,:])
 
 
 # psf_rw = psf.psfRiWo(rw_args)

@@ -47,15 +47,15 @@ def createSphere(arr_size=[30, 30, 30],
 def createCell(arr_size=[30, 30, 30],
                center=[15, 15, 15],
                r=10,
-               Im=10,
+               Im=100,
                Lm=1,
-               Ic=2):
+               Ic=10):
     """ Generate array with size 'arr_size' with sphere with radius 'r'.
     'center' - sphere center position;
     wall - sphere wall thickness in px,
     membrane intensity 'Im' and thickness 'Lm',
     and internal space intensity 'Ic'.
-    
+
     """
     coords = np.ogrid[:arr_size[0], :arr_size[1], :arr_size[2]]
     cell = np.sqrt((coords[0] - center[0])**2 + (coords[1]-center[1])**2 + (coords[2]-center[2])**2)
@@ -66,6 +66,40 @@ def createCell(arr_size=[30, 30, 30],
     cell = Im*(cell <= r) - (Im-Ic)*(cell <= r-Lm)
 
     return cell
+
+def confCollapse(img, A=10, L=3):
+    """ Collapse model object to model confocal z-stack.
+
+    A - axial scaling factor
+    L - lateral scaling factor
+    
+    """
+
+    img_shape = img.shape
+
+    print(img_shape[2] // 3)
+
+    collapsed = np.zeros((img_shape[0]//A,
+                         img_shape[1]//A,
+                         img_shape[2]//L))
+
+    i_x, i_y, i_z = 0, 0, 0
+
+    A_scale = img_shape[0] // A
+    L_scale = img_shape[2] // L
+
+    img_2d = img[15,:,:]
+
+    while i_x < A_scale:
+        while i_y < A_scale:
+            img_2d[A_scale * i_x:A_scale * i_x+1,A_scale * i_y:A_scale * i_y+1]
+
+            i_y += A
+
+        i_x += A
+
+
+
 
 def relSNR(arr, lim=10, dim=3):
     """ Calculating relative signal-to-noise ratio (in dB) of 2D or 3D image ('dim').
