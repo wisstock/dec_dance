@@ -67,36 +67,40 @@ def createCell(arr_size=[30, 30, 30],
 
     return cell
 
-def confCollapse(img, A=10, L=3):
+def confBin(img, L=2, A=4):
     """ Collapse model object to model confocal z-stack.
 
     A - axial scaling factor
     L - lateral scaling factor
+
+    https://scipython.com/blog/binning-a-2d-array-in-numpy/
     
     """
 
     img_shape = img.shape
 
-    print(img_shape[2] // 3)
+    L_size = img_shape[0] // L
+    A_size = img_shape[2] // A
 
-    collapsed = np.zeros((img_shape[0]//A,
-                         img_shape[1]//A,
-                         img_shape[2]//L))
+    new_shape = (L_size, L,
+                 L_size, L,
+                 A_size, A) # shape after binning
 
-    i_x, i_y, i_z = 0, 0, 0
+    img_2d = img[3]
 
-    A_scale = img_shape[0] // A
-    L_scale = img_shape[2] // L
 
-    img_2d = img[15,:,:]
+    # img_2d_bin_0 = img_2d.reshape(new_shape).sum(-1).sum(1)
 
-    while i_x < A_scale:
-        while i_y < A_scale:
-            img_2d[A_scale * i_x:A_scale * i_x+1,A_scale * i_y:A_scale * i_y+1]
+    img_bin = img.reshape(new_shape).sum(-1).sum(3).sum(1).T
 
-            i_y += A
-
-        i_x += A
+    print(img_2d)
+    # print(img_2d.reshape(new_shape))
+    print(img_bin)
+    print(img_shape)
+    print(new_shape)
+    print(img_bin.shape)
+    # print(img_2d_bin_0)
+    # print(img_2d_bin_1)
 
 
 

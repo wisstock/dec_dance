@@ -44,11 +44,13 @@ rw_args = {'shape': (50, 50),  # number of samples in z and r direction
             'pinhole_radius': 0.250,  # in mm
             'pinhole_shape': 'round'}
 
-test_img = dev.createCell(Im=4, Ic=2, Lm=2)
+test_img = dev.createCell(arr_size=[12, 12, 12],
+                          center=[6, 6, 6],
+                          r=4,
+                          Im=1, Ic=1, Lm=1)
 
-dev.confCollapse(test_img)
+dev.confBin(test_img)
 
-print(test_img[15,:,:])
 
 
 # psf_rw = psf.psfRiWo(rw_args)
