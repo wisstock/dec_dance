@@ -28,7 +28,7 @@ import threshold as ts
 
 FORMAT = '%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message)s'
 logging.basicConfig(format=FORMAT,
-                    level=logging.getLevelName('INFO'))
+                    level=logging.getLevelName('DEBUG'))
 
 plt.style.use('dark_background')
 plt.rcParams['figure.facecolor'] = '#272b30'
@@ -44,12 +44,12 @@ rw_args = {'shape': (50, 50),  # number of samples in z and r direction
             'pinhole_radius': 0.250,  # in mm
             'pinhole_shape': 'round'}
 
-img_0 = dev.createCell(arr_size=[100, 100, 100],
-                          center=[50, 50, 50],
-                          r=20,
+img_0 = dev.createCell(arr_size=[500, 500, 500],
+                          center=[500, 500, 500],
+                          r=200,
                           Im=100, Ic=10, Lm=1)
 
-img_1 = dev.confBin(img_0, L=4, A=10)
+img_1 = dev.confBin(img_0, L=5, A=50)
 
 
 
@@ -80,26 +80,26 @@ img_1 = dev.confBin(img_0, L=4, A=10)
 
 
 # middle slices
-max_lim = 110
+#max_lim = 110
 
-ax0 = plt.subplot(121)
-slice_0 = ax0.imshow(img_0[50,:,:])
-# slice_0.set_clim(vmin=0, vmax=max_lim) 
-divider_0 = make_axes_locatable(ax0)
-cax = divider_0.append_axes("right", size="3%", pad=0.1)
-plt.colorbar(slice_0, cax=cax)
-# ax0.axes.xaxis.set_visible(False)
-# ax0.axes.yaxis.set_visible(False)
-ax0.set_title('RAW')  # 'SNR 10dB,\n128 iterations')
+#ax0 = plt.subplot(121)
+#slice_0 = ax0.imshow(img_0[500,:,:])
+#slice_0.set_clim(vmin=0, vmax=max_lim) 
+#divider_0 = make_axes_locatable(ax0)
+#cax = divider_0.append_axes("right", size="3%", pad=0.1)
+#plt.colorbar(slice_0, cax=cax)
+#ax0.axes.xaxis.set_visible(False)
+#ax0.axes.yaxis.set_visible(False)
+#ax0.set_title('RAW')  # 'SNR 10dB,\n128 iterations')
 
-ax1 = plt.subplot(122)
-slice_1 = ax1.imshow(img_1[5,:,:])
-# slice_1.set_clim(vmin=0, vmax=max_lim) 
+#ax1 = plt.subplot(122)
+lice_1 = ax1.imshow(img_1[9,:,:])
+slice_1.set_clim(vmin=0, vmax=max_lim) 
 divider_1 = make_axes_locatable(ax1)
 cax = divider_1.append_axes("right", size="3%", pad=0.1)
 plt.colorbar(slice_1, cax=cax)
-# ax1.axes.xaxis.set_visible(False)
-# ax1.axes.yaxis.set_visible(False)
+ax1.axes.xaxis.set_visible(False)
+ax1.axes.yaxis.set_visible(False)
 ax1.set_title('BIN')  # 'SNR 20dB,\n128 iterations')
 
 # ax2 = plt.subplot(233)

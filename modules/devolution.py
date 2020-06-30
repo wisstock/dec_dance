@@ -60,10 +60,10 @@ def createCell(arr_size=[30, 30, 30],
     coords = np.ogrid[:arr_size[0], :arr_size[1], :arr_size[2]]
     cell = np.sqrt((coords[0] - center[0])**2 + (coords[1]-center[1])**2 + (coords[2]-center[2])**2)
 
-    logging.info('Void sphere with {}px wall and r={}px created '.format(Lm, r))
-
     mask_fill = 1*(cell <= r-Lm)
     cell = Im*(cell <= r) - (Im-Ic)*(cell <= r-Lm)
+
+    logging.info('Cell created, r={}px, Lm={}px, Im={}, Ic={}'.format(r, Lm, Im, Ic))
 
     return cell
 
@@ -86,23 +86,21 @@ def confBin(img, L=2, A=4):
                  L_size, L,
                  A_size, A) # shape after binning
 
-    img_2d = img[3]
+    # img_2d = img[3]
 
 
     # img_2d_bin_0 = img_2d.reshape(new_shape).sum(-1).sum(1)
 
-    img_bin = img.reshape(new_shape).sum(-1).sum(3).sum(1).T
+    img_bin = img.reshape(new_shape).sum(-1).sum(1).sum(2).T
 
-    print(img_2d)
+    # print(img_2d)
     # print(img_2d.reshape(new_shape))
-    print(img_bin)
+    # print(img_bin)
     print(img_shape)
     print(new_shape)
     print(img_bin.shape)
-    # print(img_2d_bin_0)
-    # print(img_2d_bin_1)
 
-
+    return img_bin
 
 
 def relSNR(arr, lim=10, dim=3):
