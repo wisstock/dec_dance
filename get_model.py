@@ -27,17 +27,11 @@ FORMAT = '%(asctime)s| %(levelname)s [%(filename)s: - %(funcName)20s]  %(message
 logging.basicConfig(format=FORMAT,
                     level=logging.getLevelName('INFO'))
 
-wd_path = os.path.join(sys.path[0],'model_fill/')
+wd_path = os.path.join(sys.path[0],'mod/model_bin/')
 psf_name = 'psf.tif'
 sphere_name = 'raw.tif'
 conv_name = 'conv.tif'
-noise_name = 'noise.tif'
 
-
-# model sphere parameters
-arr_size = (30,30,30)
-sphere_center = (15,15,15)
-r=10
 
 # model PSF parameters
 rw_args = {'shape': (15, 15),  # number of samples in z and r direction
@@ -51,34 +45,43 @@ rw_args = {'shape': (15, 15),  # number of samples in z and r direction
             'pinhole_shape': 'round'}
 
 
+# # simple binary sphere 
+# arr_size = (30,30,30)
+# sphere_center = (15,15,15)
+# r=10
+# sphere = dev.createSphere(arr_size,
+#                           sphere_center,
+#                           r,
+#                           wall=False)  # arr_size,sphere_center, r)
+# sphere[sphere == 1] = 4000  # yfp=1100, hpca=150
+# sphere = sphere.astype(np.float32)
 
-sphere = dev.createSphere(arr_size,
-                          sphere_center,
-                          r,
-                          wall=False)  # arr_size,sphere_center, r)
-sphere[sphere == 1] = 4000  # yfp=1100, hpca=150
-sphere = sphere.astype(np.float32)
+# model cell
+test_size = [500, 500, 500]
+lat = 4
+axi = 10
+
+cell = dev.createCell(arr_size=test_size,
+                       center=[test_size[0]//2, test_size[1]//2, test_size[2]//2],
+                       r=test_size[0]//2-100,
+                       Im=100, Ic=50, Lm=1)
+
+img = dev.confBin(cell, L=lat, A=axi)
 
 psf_rw = psf.psfRiWo(rw_args)  # generate PSF
 psf_norm = psf_rw/np.sum(psf_rw) # normalizing PSF intergral to 1
 
-logging.info('Image size {}'.format(np.shape(sphere)))
+logging.info('Image size {}'.format(np.shape(img)))
 logging.info('PSF size {}'.format(np.shape(psf_norm)))
 
 start_time = timer()
-conv_sphere = convolve(sphere, psf_norm, mode='constant')
+conv_img = convolve(img, psf_norm, mode='constant')
 end_time = timer()
 logging.info('Convolution complete in {:.3f} seconds'.format(end_time - start_time))
 
-noise_sphere = util.random_noise(conv_sphere, mode='gaussian',
-                                              mean=190,  # yfp=175, hpca=190
-                                              var=14,    # yfp=13, hpca=14
-                                              clip=False)
-
-logging.info('Raw image sum intensity {}'.format(np.sum(sphere)))
-logging.info('Convolve image sum intensity {}'.format(np.sum(conv_sphere)))
+logging.info('Raw image sum intensity {}'.format(np.sum(img)))
+logging.info('Convolve image sum intensity {}'.format(np.sum(conv_img)))
 
 tifffile.imsave(os.path.join(wd_path, psf_name), psf_norm)
-tifffile.imsave(os.path.join(wd_path, sphere_name), sphere)
-tifffile.imsave(os.path.join(wd_path, conv_name), conv_sphere)
-tifffile.imsave(os.path.join(wd_path, noise_name), noise_sphere)
+tifffile.imsave(os.path.join(wd_path, sphere_name), img)
+tifffile.imsave(os.path.join(wd_path, conv_name), conv_img)

@@ -44,12 +44,17 @@ rw_args = {'shape': (50, 50),  # number of samples in z and r direction
             'pinhole_radius': 0.250,  # in mm
             'pinhole_shape': 'round'}
 
-img_0 = dev.createCell(arr_size=[100, 100, 100],
-                          center=[50, 50, 50],
-                          r=20,
-                          Im=100, Ic=10, Lm=1)
 
-img_1 = dev.confBin(img_0, L=4, A=10)
+test_size = [700, 700, 700]
+lat = 50
+axi = 10
+
+img_0 = dev.createCell(arr_size=test_size,
+                       center=[test_size[0]//2, test_size[1]//2, test_size[2]//2],
+                       r=test_size[0]//2-100,
+                       Im=100, Ic=10, Lm=1)
+
+img_1 = dev.confBin(img_0, L=lat, A=axi)
 
 
 
@@ -83,7 +88,7 @@ img_1 = dev.confBin(img_0, L=4, A=10)
 max_lim = 110
 
 ax0 = plt.subplot(121)
-slice_0 = ax0.imshow(img_0[50,:,:])
+slice_0 = ax0.imshow(img_0[test_size[0]//2,:,:])
 # slice_0.set_clim(vmin=0, vmax=max_lim) 
 divider_0 = make_axes_locatable(ax0)
 cax = divider_0.append_axes("right", size="3%", pad=0.1)
@@ -93,7 +98,7 @@ plt.colorbar(slice_0, cax=cax)
 ax0.set_title('RAW')  # 'SNR 10dB,\n128 iterations')
 
 ax1 = plt.subplot(122)
-slice_1 = ax1.imshow(img_1[5,:,:])
+slice_1 = ax1.imshow(img_1[axi//2,:,:])
 # slice_1.set_clim(vmin=0, vmax=max_lim) 
 divider_1 = make_axes_locatable(ax1)
 cax = divider_1.append_axes("right", size="3%", pad=0.1)

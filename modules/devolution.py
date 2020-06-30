@@ -70,38 +70,25 @@ def createCell(arr_size=[30, 30, 30],
 def confBin(img, L=2, A=4):
     """ Collapse model object to model confocal z-stack.
 
-    A - axial scaling factor
-    L - lateral scaling factor
+    A - new axial size
+    L - new lateral size
 
     https://scipython.com/blog/binning-a-2d-array-in-numpy/
     
     """
 
+    logging.info("L={}px, A={}px".format(L, A))
+
     img_shape = img.shape
 
-    L_size = img_shape[0] // L
-    A_size = img_shape[2] // A
+    L_scal = img_shape[0] // L
+    A_scal = img_shape[2] // A
 
-    new_shape = (L_size, L,
-                 L_size, L,
-                 A_size, A) # shape after binning
+    new_shape = (L, L_scal,
+                 L, L_scal,
+                 A, A_scal) # shape after binning
 
-    # img_2d = img[3]
-
-
-    # img_2d_bin_0 = img_2d.reshape(new_shape).sum(-1).sum(1)
-
-    img_bin = img.reshape(new_shape).sum(-1).sum(1).sum(2).T
-
-    # print(img_2d)
-    # print(img_2d.reshape(new_shape))
-    # print(img_bin)
-    print(img_shape)
-    print(new_shape)
-    print(img_bin.shape)
-
-    return img_bin
-
+    return img.reshape(new_shape).sum(-1).sum(1).sum(2).T
 
 def relSNR(arr, lim=10, dim=3):
     """ Calculating relative signal-to-noise ratio (in dB) of 2D or 3D image ('dim').
